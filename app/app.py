@@ -1,4 +1,21 @@
 import streamlit as st
+from services.dashboard import (
+    business_kpis,
+    churn_distribution,
+    monthly_charges,
+    contract_distribution,
+    payment_distribution,
+    tenure_distribution,
+)
+
+from components.dashboard import (
+    show_business_kpis,
+    show_churn_chart,
+    show_monthly_charges,
+    show_contract_chart,
+    show_payment_chart,
+    show_tenure_chart,
+)
 from components.profiler import show_boxplot
 from services.profiler import numeric_columns
 from components.profiler import show_distribution
@@ -56,6 +73,37 @@ def main():
             show_correlation_heatmap(correlation)
             show_distribution(df, numeric_cols)
             show_boxplot(df, numeric_cols)
+
+            # ==========================================================
+            # BUSINESS DASHBOARD
+            # ==========================================================
+
+            st.divider()
+            st.title("📊 Business Intelligence Dashboard")
+
+            # KPIs
+            kpis = business_kpis(df)
+            show_business_kpis(kpis)
+
+            # Churn Distribution
+            churn_df = churn_distribution(df)
+            show_churn_chart(churn_df)
+
+            # Monthly Charges
+            charges = monthly_charges(df)
+            show_monthly_charges(charges)
+
+            # Contract Distribution
+            contract_df = contract_distribution(df)
+            show_contract_chart(contract_df)
+
+            # Payment Method Distribution
+            payment_df = payment_distribution(df)
+            show_payment_chart(payment_df)
+
+            # Tenure Distribution
+            tenure = tenure_distribution(df)
+            show_tenure_chart(tenure)
         except Exception as e:
             st.error(f"Error: {e}")
 

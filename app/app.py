@@ -1,4 +1,49 @@
 import streamlit as st
+from services.insights import generate_business_insights
+from components.insights import show_business_insights
+# -----------------------------
+# Streamlit Page Configuration
+# -----------------------------
+st.set_page_config(
+    page_title="AI Business Analyst Assistant",
+    page_icon="🤖",
+    layout="wide"
+)
+
+# -----------------------------
+# Imports
+# -----------------------------
+from components.header import show_header
+from components.sidebar import show_sidebar
+from components.uploader import upload_file
+
+from components.filter import show_filters
+from services.filter import apply_filters
+
+from services.data_loader import load_data
+
+from services.profiler import (
+    profile_data,
+    missing_values_summary,
+    data_type_summary,
+    descriptive_statistics,
+    categorical_summary,
+    correlation_matrix,
+    numeric_columns,
+)
+
+from components.profiler import (
+    show_profile,
+    show_missing_values,
+    show_data_types,
+    show_data_type_chart,
+    show_descriptive_statistics,
+    show_categorical_summary,
+    show_correlation_heatmap,
+    show_distribution,
+    show_boxplot,
+)
+
 from services.dashboard import (
     business_kpis,
     churn_distribution,
@@ -16,97 +61,108 @@ from components.dashboard import (
     show_payment_chart,
     show_tenure_chart,
 )
-from components.profiler import show_boxplot
-from services.profiler import numeric_columns
-from components.profiler import show_distribution
-from services.profiler import correlation_matrix
-from components.profiler import show_correlation_heatmap
-from components.profiler import show_categorical_summary
-from services.profiler import categorical_summary
-from components.profiler import show_descriptive_statistics
-from services.profiler import descriptive_statistics
-from components.profiler import show_data_type_chart
-from components.profiler import show_data_types
-from services.profiler import data_type_summary
-from services.profiler import profile_data
-from components.profiler import show_profile
-from services.profiler import missing_values_summary
-from components.profiler import show_missing_values
-from components.header import show_header
-from components.sidebar import show_sidebar
-from components.uploader import upload_file
-from services.data_loader import load_data
+
 
 def main():
-    st.set_page_config(
-        page_title="AI Business Analyst Assistant",
-        page_icon="🤖",
-        layout="wide"
-    )
 
+    # -----------------------------
+    # Header
+    # -----------------------------
     show_sidebar()
     show_header()
 
     uploaded_file = upload_file()
 
-    if uploaded_file is not None:
-        try:
-            df = load_data(uploaded_file)
-            profile = profile_data(df)
-            missing_summary = missing_values_summary(df)
-            st.success("✅ File uploaded successfully!")
+    if uploaded_file is None:
+        return
 
-            st.write("### Dataset Preview")
-            st.dataframe(df.head())
+    try:
+        # -----------------------------
+        # Load Data
+        # -----------------------------
+        df = load_data(uploaded_file)
 
-            show_profile(profile)
-            show_missing_values(missing_summary)
-            dtype_summary = data_type_summary(df)
-            stats = descriptive_statistics(df)
-            categorical = categorical_summary(df)
-            correlation = correlation_matrix(df)
-            numeric_cols = numeric_columns(df)
-            show_data_types(dtype_summary)
-            show_data_type_chart(dtype_summary)
-            show_descriptive_statistics(stats)
-            show_categorical_summary(categorical)
-            show_correlation_heatmap(correlation)
-            show_distribution(df, numeric_cols)
-            show_boxplot(df, numeric_cols)
+        # -----------------------------
+        # Filters
+        # -----------------------------
+        filters = show_filters(df)
+        filtered_df = apply_filters(df, filters)
 
-            # ==========================================================
-            # BUSINESS DASHBOARD
-            # ==========================================================
+        st.success("✅ File uploaded successfully!")
 
-            st.divider()
-            st.title("📊 Business Intelligence Dashboard")
+        # -----------------------------
+        # Dataset Preview
+        # -----------------------------
+        st.subheader("Dataset Preview")
+        st.dataframe(filtered_df.head())
 
-            # KPIs
-            kpis = business_kpis(df)
-            show_business_kpis(kpis)
+        # -----------------------------
+        # Data Profiling
+        # -----------------------------
+        profile = profile_data(filtered_df)
+        missing_summary = missing_values_summary(filtered_df)
+        dtype_summary = data_type_summary(filtered_df)
+        stats = descriptive_statistics(filtered_df)
+        categorical = categorical_summary(filtered_df)
+        correlation = correlation_matrix(filtered_df)
+        numeric_cols = numeric_columns(filtered_df)
 
-            # Churn Distribution
-            churn_df = churn_distribution(df)
+        show_profile(profile)
+        show_missing_values(missing_summary)
+        show_data_types(dtype_summary)
+        show_data_type_chart(dtype_summary)
+        show_descriptive_statistics(stats)
+        show_categorical_summary(categorical)
+        show_correlation_heatmap(correlation)
+        show_distribution(filtered_df, numeric_cols)
+        show_boxplot(filtered_df, numeric_cols)
+
+        # -----------------------------
+        # Dashboard
+        # -----------------------------
+        st.divider()
+
+        kpis = business_kpis(filtered_df)
+        show_business_kpis(kpis)
+
+        st.divider()
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            churn_df = churn_distribution(filtered_df)
             show_churn_chart(churn_df)
 
-            # Monthly Charges
-            charges = monthly_charges(df)
-            show_monthly_charges(charges)
-
-            # Contract Distribution
-            contract_df = contract_distribution(df)
+        with col2:
+            contract_df = contract_distribution(filtered_df)
             show_contract_chart(contract_df)
 
-            # Payment Method Distribution
-            payment_df = payment_distribution(df)
+        col3, col4 = st.columns(2)
+
+        with col3:
+            charges = monthly_charges(filtered_df)
+            show_monthly_charges(charges)
+
+        with col4:
+            payment_df = payment_distribution(filtered_df)
             show_payment_chart(payment_df)
 
-            # Tenure Distribution
-            tenure = tenure_distribution(df)
-            show_tenure_chart(tenure)
-        except Exception as e:
-            st.error(f"Error: {e}")
+        col5, col6 = st.columns(2)
 
+        with col5:
+            tenure = tenure_distribution(filtered_df)
+            show_tenure_chart(tenure)
+
+        with col6:
+            st.info("🚀 Revenue Analytics Coming Soon")
+
+        # -----------------------------
+        # AI Business Insights
+        # -----------------------------
+        insights = generate_business_insights(filtered_df)
+        show_business_insights(insights)
+    except Exception as e:
+        st.error(f"An error occurred while processing the file: {e}")
 
 if __name__ == "__main__":
     main()

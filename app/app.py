@@ -1,4 +1,12 @@
 import streamlit as st
+from services.opportunity_detection import detect_business_opportunities
+from components.opportunity_detection import show_business_opportunities
+from services.risk_detection import detect_business_risk
+from components.risk_detection import show_business_risk
+from services.recommendations import generate_recommendations
+from components.recommendations import show_recommendations
+from services.executive_summary import generate_executive_summary
+from components.executive_summary import show_executive_summary
 from services.insights import generate_business_insights
 from components.insights import show_business_insights
 # -----------------------------
@@ -161,6 +169,30 @@ def main():
         # -----------------------------
         insights = generate_business_insights(filtered_df)
         show_business_insights(insights)
+
+        # -----------------------------
+        # Executive Business Summary
+        # -----------------------------
+        summary = generate_executive_summary(filtered_df)
+        show_executive_summary(summary)
+
+        # -----------------------------
+        # Smart Business Recommendations
+        # -----------------------------
+        recommendations = generate_recommendations(filtered_df)
+        show_recommendations(recommendations)
+
+        # -----------------------------
+        # Business Risk Assessment
+        # -----------------------------
+        risk = detect_business_risk(filtered_df)
+        show_business_risk(risk)
+
+        # -----------------------------
+        # Business Growth Opportunities
+        # -----------------------------
+        opportunities = detect_business_opportunities(filtered_df)
+        show_business_opportunities(opportunities)
     except Exception as e:
         st.error(f"An error occurred while processing the file: {e}")
 

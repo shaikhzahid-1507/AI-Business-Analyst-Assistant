@@ -3,35 +3,50 @@ import streamlit as st
 
 def show_filters(df):
     """
-    Display sidebar filters.
+    Display professional dashboard filters.
     """
 
-    st.sidebar.header("🎛️ Dashboard Filters")
+    with st.sidebar:
+     with st.expander("🎯 Dataset Filters", expanded=True):
 
-    gender = st.sidebar.multiselect(
-        "Gender",
-        sorted(df["gender"].dropna().unique())
-    )
+        st.subheader("🎯 Dataset Filters")
+        st.caption("Filter the dataset to perform focused business analysis.")
 
-    contract = st.sidebar.multiselect(
-        "Contract",
-        sorted(df["Contract"].dropna().unique())
-    )
+        st.markdown("### 👤 Customer")
 
-    payment = st.sidebar.multiselect(
-        "Payment Method",
-        sorted(df["PaymentMethod"].dropna().unique())
-    )
+        gender = st.multiselect(
+            "Gender",
+            sorted(df["gender"].dropna().unique()),
+            placeholder="Select Gender"
+        )
 
-    internet = st.sidebar.multiselect(
-        "Internet Service",
-        sorted(df["InternetService"].dropna().unique())
-    )
+        churn = st.multiselect(
+            "Churn Status",
+            sorted(df["Churn"].dropna().unique()),
+            placeholder="Select Churn Status"
+        )
 
-    churn = st.sidebar.multiselect(
-        "Churn",
-        sorted(df["Churn"].dropna().unique())
-    )
+        st.markdown("---")
+
+        st.markdown("### 📄 Contract")
+
+        contract = st.multiselect(
+            "Contract Type",
+            sorted(df["Contract"].dropna().unique()),
+            placeholder="Select Contract"
+        )
+
+        payment = st.multiselect(
+            "Payment Method",
+            sorted(df["PaymentMethod"].dropna().unique()),
+            placeholder="Select Payment Method"
+        )
+
+        internet = st.multiselect(
+            "Internet Service",
+            sorted(df["InternetService"].dropna().unique()),
+            placeholder="Select Internet Service"
+        )
 
     return {
         "gender": gender,

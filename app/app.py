@@ -97,16 +97,53 @@ def main():
         filtered_df = apply_filters(df, filters)
 
         st.success("✅ File uploaded successfully!")
+        # -----------------------------
+        # Executive Dataset Summary
+        # -----------------------------
+        st.subheader("📂 Dataset Overview")
+
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            st.metric(
+                label="📄 Rows",
+                value=f"{filtered_df.shape[0]:,}"
+            )
+
+        with col2:
+            st.metric(
+                label="📊 Columns",
+                value=filtered_df.shape[1]
+            )
+
+        with col3:
+            st.metric(
+                label="⚠ Missing Values",
+                value=int(filtered_df.isnull().sum().sum())
+            )
+
+        with col4:
+            memory = filtered_df.memory_usage(deep=True).sum() / (1024 * 1024)
+            st.metric(
+                label="💾 Memory",
+                value=f"{memory:.2f} MB"
+            )
+
+        st.divider()
 
         # -----------------------------
         # Dataset Preview
         # -----------------------------
-        st.subheader("Dataset Preview")
+        st.markdown("## 📋 Dataset Preview")
+        st.caption("Review the uploaded dataset before performing analytics.")
         st.dataframe(filtered_df.head())
 
         # -----------------------------
         # Data Profiling
         # -----------------------------
+        st.divider()
+        st.markdown("## 🔍 Data Profiling")
+        st.caption("Understand data quality, structure, distributions, and relationships.")
         profile = profile_data(filtered_df)
         missing_summary = missing_values_summary(filtered_df)
         dtype_summary = data_type_summary(filtered_df)
@@ -129,6 +166,8 @@ def main():
         # Dashboard
         # -----------------------------
         st.divider()
+        st.markdown("## 📊 Business Dashboard")
+        st.caption("Key business metrics and customer analytics.")
 
         kpis = business_kpis(filtered_df)
         show_business_kpis(kpis)
@@ -167,30 +206,50 @@ def main():
         # -----------------------------
         # AI Business Insights
         # -----------------------------
+        st.divider()
+        st.markdown("## 🤖 AI Business Insights")
+        st.caption("AI-generated insights based on customer behaviour and business performance.")
+
         insights = generate_business_insights(filtered_df)
         show_business_insights(insights)
 
         # -----------------------------
         # Executive Business Summary
         # -----------------------------
+        st.divider()
+        st.markdown("## 📑 Executive Summary")
+        st.caption("A concise overview of the most important business findings.")
+
         summary = generate_executive_summary(filtered_df)
         show_executive_summary(summary)
 
         # -----------------------------
         # Smart Business Recommendations
         # -----------------------------
+        st.divider()
+        st.markdown("## 💡 Business Recommendations")
+        st.caption("Suggested actions to improve customer retention and business growth.")
+
         recommendations = generate_recommendations(filtered_df)
         show_recommendations(recommendations)
 
         # -----------------------------
         # Business Risk Assessment
         # -----------------------------
+        st.divider()
+        st.markdown("## ⚠️ Risk Assessment")
+        st.caption("Potential business risks detected from the uploaded data.")
+
         risk = detect_business_risk(filtered_df)
         show_business_risk(risk)
 
         # -----------------------------
         # Business Growth Opportunities
         # -----------------------------
+        st.divider()
+        st.markdown("## 🚀 Growth Opportunities")
+        st.caption("AI-identified opportunities to improve business performance.")
+
         opportunities = detect_business_opportunities(filtered_df)
         show_business_opportunities(opportunities)
     except Exception as e:

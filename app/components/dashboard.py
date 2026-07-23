@@ -1,41 +1,44 @@
 import streamlit as st
+from components.kpi_card import show_kpi_card
 import plotly.express as px
 
 def show_business_kpis(kpis):
     """
-    Display business KPI cards.
+    Display modern KPI cards.
     """
-    
+
     st.divider()
     st.header("📊 Business Dashboard")
 
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.metric(
-            "👥 Customers",
-            f"{kpis['total_customers']:,}"
+        show_kpi_card(
+            "Total Customers",
+            f"{kpis['total_customers']:,}",
+            "👥"
         )
 
     with col2:
-        st.metric(
-            "💰 Avg Monthly",
-            f"${kpis['average_monthly']}"
+        show_kpi_card(
+            "Average Monthly",
+            f"${kpis['average_monthly']}",
+            "💰"
         )
 
     with col3:
-        st.metric(
-            "📅 Avg Tenure",
-            f"{kpis['average_tenure']} Months"
+        show_kpi_card(
+            "Average Tenure",
+            f"{kpis['average_tenure']} Months",
+            "📅"
         )
 
     with col4:
-        st.metric(
-            "📈 Churn Rate",
-            f"{kpis['churn_rate']}%"
+        show_kpi_card(
+            "Churn Rate",
+            f"{kpis['churn_rate']}%",
+            "📈"
         )
-
-
 def show_churn_chart(churn_df):
     """
     Display churn breakdown chart.
@@ -63,6 +66,13 @@ def show_churn_chart(churn_df):
         st.info("No churn data available to display.")
         return
 
+    fig.update_layout(
+    template="plotly_white",
+    title_x=0.5,
+    margin=dict(l=20, r=20, t=60, b=20),
+    legend_title="",
+    font=dict(size=14)
+   )
     st.plotly_chart(fig, use_container_width=True)
 
 def show_monthly_charges(charges):
@@ -79,8 +89,12 @@ def show_monthly_charges(charges):
     )
 
     fig.update_layout(
-        xaxis_title="Monthly Charges",
-        yaxis_title="Customers",
+    template="plotly_white",
+    xaxis_title="Monthly Charges ($)",
+    yaxis_title="Customers",
+    title_x=0.5,
+    margin=dict(l=20, r=20, t=60, b=20),
+    font=dict(size=14)
     )
 
     st.plotly_chart(
@@ -103,10 +117,18 @@ def show_payment_chart(payment_df):
         hole=0.45,
         title="Customers by Payment Method"
     )
-
     fig.update_traces(
         textposition="inside",
         textinfo="percent+label"
+    )
+
+    fig.update_layout(
+        template="plotly_white",
+        title_x=0.5,
+        margin=dict(l=20, r=20, t=60, b=20),
+        legend_orientation="h",
+        legend_y=-0.15,
+        font=dict(size=14)
     )
 
     st.plotly_chart(
@@ -129,8 +151,12 @@ def show_tenure_chart(tenure):
     )
 
     fig.update_layout(
-        xaxis_title="Tenure (Months)",
-        yaxis_title="Customers"
+    template="plotly_white",
+    xaxis_title="Tenure (Months)",
+    yaxis_title="Customers",
+    title_x=0.5,
+    margin=dict(l=20, r=20, t=60, b=20),
+    font=dict(size=14)
     )
 
     st.plotly_chart(
@@ -160,9 +186,14 @@ def show_contract_chart(contract_df):
     )
 
     fig.update_layout(
-        xaxis_title="Contract Type",
-        yaxis_title="Customers"
-    )
+    template="plotly_white",
+    xaxis_title="Contract Type",
+    yaxis_title="Customers",
+    title_x=0.5,
+    margin=dict(l=20, r=20, t=60, b=20),
+    legend_title="",
+    font=dict(size=14)
+)
 
     st.plotly_chart(
         fig,

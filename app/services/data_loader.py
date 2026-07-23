@@ -1,9 +1,13 @@
 import pandas as pd
+import streamlit as st
 
 
+@st.cache_data(show_spinner=False)
 def load_data(uploaded_file):
     """
     Load CSV or Excel file into a Pandas DataFrame.
+    The result is cached to improve performance when
+    the same file is processed repeatedly.
     """
 
     if uploaded_file is None:
@@ -12,10 +16,12 @@ def load_data(uploaded_file):
     file_name = uploaded_file.name.lower()
 
     if file_name.endswith(".csv"):
-        return pd.read_csv(uploaded_file)
+        df = pd.read_csv(uploaded_file)
 
     elif file_name.endswith(".xlsx"):
-        return pd.read_excel(uploaded_file)
+        df = pd.read_excel(uploaded_file)
 
     else:
         raise ValueError("Unsupported file format.")
+
+    return df

@@ -24,16 +24,14 @@ def show_sidebar():
         # Navigation
         # ---------------------------------
         st.subheader("🧭 Navigation")
-        st.markdown("""
-- 📤 Upload Dataset
-- 🔍 Data Profiling
-- 📊 Business Dashboard
-- 🤖 AI Insights
-- 📑 Executive Summary
-- 💡 Recommendations
-- ⚠️ Risk Assessment
-- 🚀 Growth Opportunities
-""")
+        st.write("📤 Upload Dataset")
+        st.write("🔍 Data Profiling")
+        st.write("📊 Business Dashboard")
+        st.write("🤖 AI Insights")
+        st.write("📑 Executive Summary")
+        st.write("💡 Recommendations")
+        st.write("⚠️ Risk Assessment")
+        st.write("🚀 Growth Opportunities")
 
         st.info(
     "Upload a dataset and use the filters below to explore your business data."
@@ -51,10 +49,14 @@ def show_sidebar():
         # ---------------------------------
         st.markdown("---")
 
-        st.caption("""
-Developed by Zahid Shaikh
+        st.markdown("---")
+
+st.caption(
+"""
+👨‍💻 Developed by Zahid Shaikh
 
 🤖 AI Business Analyst Assistant
 
-Version 1.0
-""")
+© 2026 | Version 1.0
+"""
+)

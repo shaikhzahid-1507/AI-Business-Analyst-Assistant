@@ -82,9 +82,17 @@ def main():
     uploaded_file = upload_file()
 
     if uploaded_file is None:
-        return
+
+     st.info(
+        "👆 Upload a CSV or Excel file to begin your business analysis."
+    )
+
+    return
 
     try:
+
+     with st.spinner("🔄 Processing your dataset..."):
+
         # -----------------------------
         # Load Data
         # -----------------------------
@@ -96,7 +104,15 @@ def main():
         filters = show_filters(df)
         filtered_df = apply_filters(df, filters)
 
-        st.success("✅ File uploaded successfully!")
+        st.success("✅ Dataset processed successfully!")
+
+        # -----------------------------
+        # Filters
+        # -----------------------------
+        filters = show_filters(df)
+        filtered_df = apply_filters(df, filters)
+
+        st.success("✅ Dataset processed successfully!")
         # -----------------------------
         # Executive Dataset Summary
         # -----------------------------
@@ -253,7 +269,11 @@ def main():
         opportunities = detect_business_opportunities(filtered_df)
         show_business_opportunities(opportunities)
     except Exception as e:
-        st.error(f"An error occurred while processing the file: {e}")
+
+     st.error("❌ Unable to process the uploaded dataset.")
+
+    with st.expander("View Technical Details"):
+        st.exception(e)
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,14 @@
 import streamlit as st
+st.subheader("📂 Dataset Overview")
+from components.footer import show_footer
+from utils.safe_render import safe_render
+from components.ai_assistant import show_ai_assistant
+from services.ai_decision import answer_business_question
+from services.executive_alerts import generate_executive_alerts
+from components.executive_alerts import show_executive_alerts
+from services.business_health import calculate_business_health
+from components.executive_dashboard import show_executive_dashboard
+from components.export import show_export_center
 from services.opportunity_detection import detect_business_opportunities
 from components.opportunity_detection import show_business_opportunities
 from services.risk_detection import detect_business_risk
@@ -9,6 +19,7 @@ from services.executive_summary import generate_executive_summary
 from components.executive_summary import show_executive_summary
 from services.insights import generate_business_insights
 from components.insights import show_business_insights
+
 # -----------------------------
 # Streamlit Page Configuration
 # -----------------------------
@@ -26,7 +37,7 @@ from components.sidebar import show_sidebar
 from components.uploader import upload_file
 
 from components.filter import show_filters
-from services.filter import apply_filters
+from services.filters import apply_business_filters
 
 from services.data_loader import load_data
 
@@ -87,32 +98,29 @@ def main():
         "👆 Upload a CSV or Excel file to begin your business analysis."
     )
 
-    return
+     return
 
     try:
+        with st.spinner("🔄 Processing your dataset..."):
 
-     with st.spinner("🔄 Processing your dataset..."):
+            # -----------------------------
+            # Load Data
+            # -----------------------------
+            df = load_data(uploaded_file)
+            # -----------------------------
+            # Filters
+            # -----------------------------
+            filters = show_filters(df)
 
-        # -----------------------------
-        # Load Data
-        # -----------------------------
-        df = load_data(uploaded_file)
+            filtered_df = apply_business_filters(df, filters)
+            if filtered_df.empty:
+             st.warning("📭 No records found for the selected filters.")
+             st.info("Try changing your filters to see business insights.")
+             return
 
-        # -----------------------------
-        # Filters
-        # -----------------------------
-        filters = show_filters(df)
-        filtered_df = apply_filters(df, filters)
+            st.success("✅ Dataset processed successfully!")
+            st.toast("Analysis completed successfully! 🎉")
 
-        st.success("✅ Dataset processed successfully!")
-
-        # -----------------------------
-        # Filters
-        # -----------------------------
-        filters = show_filters(df)
-        filtered_df = apply_filters(df, filters)
-
-        st.success("✅ Dataset processed successfully!")
         # -----------------------------
         # Executive Dataset Summary
         # -----------------------------
@@ -145,8 +153,8 @@ def main():
                 value=f"{memory:.2f} MB"
             )
 
-        st.divider()
-
+       
+    
         # -----------------------------
         # Dataset Preview
         # -----------------------------
@@ -181,12 +189,37 @@ def main():
         # -----------------------------
         # Dashboard
         # -----------------------------
+        
         st.divider()
         st.markdown("## 📊 Business Dashboard")
         st.caption("Key business metrics and customer analytics.")
 
         kpis = business_kpis(filtered_df)
+        health = calculate_business_health(kpis)
+        alerts = generate_executive_alerts(kpis)
         show_business_kpis(kpis)
+        safe_render(show_executive_dashboard, health)
+        safe_render(show_executive_alerts, alerts)
+
+        summary = generate_executive_summary(filtered_df)
+
+# Generate AI insights ONCE
+        insights = generate_business_insights(filtered_df)
+
+        recommendations = generate_recommendations(filtered_df)
+        risk = detect_business_risk(filtered_df)
+        opportunities = detect_business_opportunities(filtered_df)
+
+        safe_render(
+    show_export_center,
+    filtered_df,
+    kpis,
+    summary,
+    insights,
+    recommendations,
+    risk,
+    opportunities,
+)
 
         st.divider()
 
@@ -194,40 +227,38 @@ def main():
 
         with col1:
             churn_df = churn_distribution(filtered_df)
-            show_churn_chart(churn_df)
+            safe_render(show_churn_chart, churn_df)
 
         with col2:
             contract_df = contract_distribution(filtered_df)
-            show_contract_chart(contract_df)
+            safe_render(show_contract_chart, contract_df)
 
         col3, col4 = st.columns(2)
 
         with col3:
             charges = monthly_charges(filtered_df)
-            show_monthly_charges(charges)
+            safe_render(show_monthly_charges, charges)
 
         with col4:
             payment_df = payment_distribution(filtered_df)
-            show_payment_chart(payment_df)
+            safe_render(show_payment_chart, payment_df)
 
         col5, col6 = st.columns(2)
 
         with col5:
             tenure = tenure_distribution(filtered_df)
-            show_tenure_chart(tenure)
+            safe_render(show_tenure_chart, tenure)
 
         with col6:
             st.info("🚀 Revenue Analytics Coming Soon")
-
+            
         # -----------------------------
         # AI Business Insights
         # -----------------------------
         st.divider()
         st.markdown("## 🤖 AI Business Insights")
         st.caption("AI-generated insights based on customer behaviour and business performance.")
-
-        insights = generate_business_insights(filtered_df)
-        show_business_insights(insights)
+        safe_render(show_business_insights, insights)
 
         # -----------------------------
         # Executive Business Summary
@@ -236,8 +267,7 @@ def main():
         st.markdown("## 📑 Executive Summary")
         st.caption("A concise overview of the most important business findings.")
 
-        summary = generate_executive_summary(filtered_df)
-        show_executive_summary(summary)
+        safe_render(show_executive_summary, summary)
 
         # -----------------------------
         # Smart Business Recommendations
@@ -246,8 +276,7 @@ def main():
         st.markdown("## 💡 Business Recommendations")
         st.caption("Suggested actions to improve customer retention and business growth.")
 
-        recommendations = generate_recommendations(filtered_df)
-        show_recommendations(recommendations)
+        safe_render(show_recommendations, recommendations)
 
         # -----------------------------
         # Business Risk Assessment
@@ -256,8 +285,7 @@ def main():
         st.markdown("## ⚠️ Risk Assessment")
         st.caption("Potential business risks detected from the uploaded data.")
 
-        risk = detect_business_risk(filtered_df)
-        show_business_risk(risk)
+        safe_render(show_business_risk, risk)
 
         # -----------------------------
         # Business Growth Opportunities
@@ -266,14 +294,22 @@ def main():
         st.markdown("## 🚀 Growth Opportunities")
         st.caption("AI-identified opportunities to improve business performance.")
 
-        opportunities = detect_business_opportunities(filtered_df)
-        show_business_opportunities(opportunities)
+        safe_render(show_business_opportunities, opportunities)
+        question = show_ai_assistant()
+
+        if question:
+            answer = answer_business_question(
+                question,
+                filtered_df,
+                kpis,
+            )
+
+            st.success(answer)
+            show_footer()
     except Exception as e:
-
-     st.error("❌ Unable to process the uploaded dataset.")
-
-    with st.expander("View Technical Details"):
-        st.exception(e)
+        st.error("❌ Unable to process the uploaded dataset.")
+        with st.expander("View Technical Details"):
+            st.exception(e)
 
 if __name__ == "__main__":
     main()

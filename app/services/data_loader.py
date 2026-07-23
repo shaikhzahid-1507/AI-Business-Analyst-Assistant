@@ -6,8 +6,7 @@ import streamlit as st
 def load_data(uploaded_file):
     """
     Load CSV or Excel file into a Pandas DataFrame.
-    The result is cached to improve performance when
-    the same file is processed repeatedly.
+    The result is cached to improve performance.
     """
 
     if uploaded_file is None:

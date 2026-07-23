@@ -6,9 +6,6 @@ def show_business_risk(risk):
     Display the overall business risk level.
     """
 
-    st.divider()
-    st.header("⚠️ Business Risk Assessment")
-
     level = risk["level"]
     icon = risk["icon"]
     message = risk["message"]

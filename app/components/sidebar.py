@@ -50,13 +50,17 @@ def show_sidebar():
         st.markdown("---")
 
         st.markdown("---")
+st.divider()
 
-st.caption(
-"""
-👨‍💻 Developed by Zahid Shaikh
+st.markdown("### 👨‍💻 About")
 
-🤖 AI Business Analyst Assistant
+st.info(
+    """
+AI Business Analyst Assistant
 
-© 2026 | Version 1.0
+Version: 1.0
+
+Developer:
+Zahid Shaikh
 """
 )

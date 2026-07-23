@@ -3,50 +3,70 @@ import streamlit as st
 
 def show_filters(df):
     """
-    Display professional dashboard filters.
+    Display enterprise business filters.
     """
 
-    with st.sidebar:
-     with st.expander("🎯 Dataset Filters", expanded=True):
+    st.sidebar.header("🎛️ Business Filters")
 
-        st.subheader("🎯 Dataset Filters")
-        st.caption("Filter the dataset to perform focused business analysis.")
+    gender = st.sidebar.multiselect(
+        "Gender",
+        sorted(df["gender"].dropna().unique())
+    )
 
-        st.markdown("### 👤 Customer")
+    contract = st.sidebar.multiselect(
+        "Contract",
+        sorted(df["Contract"].dropna().unique())
+    )
 
-        gender = st.multiselect(
-            "Gender",
-            sorted(df["gender"].dropna().unique()),
-            placeholder="Select Gender"
+    payment = st.sidebar.multiselect(
+        "Payment Method",
+        sorted(df["PaymentMethod"].dropna().unique())
+    )
+
+    internet = st.sidebar.multiselect(
+        "Internet Service",
+        sorted(df["InternetService"].dropna().unique())
+    )
+
+    churn = st.sidebar.multiselect(
+        "Churn",
+        sorted(df["Churn"].dropna().unique())
+    )
+
+    senior = st.sidebar.multiselect(
+        "Senior Citizen",
+        sorted(df["SeniorCitizen"].dropna().unique())
+    )
+
+    partner = st.sidebar.multiselect(
+        "Partner",
+        sorted(df["Partner"].dropna().unique())
+    )
+
+    dependents = st.sidebar.multiselect(
+        "Dependents",
+        sorted(df["Dependents"].dropna().unique())
+    )
+
+    tenure_range = st.sidebar.slider(
+        "Tenure (Months)",
+        int(df["tenure"].min()),
+        int(df["tenure"].max()),
+        (
+            int(df["tenure"].min()),
+            int(df["tenure"].max())
         )
+    )
 
-        churn = st.multiselect(
-            "Churn Status",
-            sorted(df["Churn"].dropna().unique()),
-            placeholder="Select Churn Status"
+    monthly_range = st.sidebar.slider(
+        "Monthly Charges ($)",
+        float(df["MonthlyCharges"].min()),
+        float(df["MonthlyCharges"].max()),
+        (
+            float(df["MonthlyCharges"].min()),
+            float(df["MonthlyCharges"].max())
         )
-
-        st.markdown("---")
-
-        st.markdown("### 📄 Contract")
-
-        contract = st.multiselect(
-            "Contract Type",
-            sorted(df["Contract"].dropna().unique()),
-            placeholder="Select Contract"
-        )
-
-        payment = st.multiselect(
-            "Payment Method",
-            sorted(df["PaymentMethod"].dropna().unique()),
-            placeholder="Select Payment Method"
-        )
-
-        internet = st.multiselect(
-            "Internet Service",
-            sorted(df["InternetService"].dropna().unique()),
-            placeholder="Select Internet Service"
-        )
+    )
 
     return {
         "gender": gender,
@@ -54,4 +74,9 @@ def show_filters(df):
         "payment": payment,
         "internet": internet,
         "churn": churn,
+        "senior": senior,
+        "partner": partner,
+        "dependents": dependents,
+        "tenure": tenure_range,
+        "monthly": monthly_range,
     }

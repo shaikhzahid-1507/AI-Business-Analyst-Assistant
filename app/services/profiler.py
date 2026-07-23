@@ -1,6 +1,45 @@
+import functools
+from types import SimpleNamespace
+
 import pandas as pd
 
+class cache_data:
+    """
+    Lightweight fallback cache decorator with in-memory memoization.
+    """
 
+    def __init__(self):
+        self._cache = {}
+
+    def __call__(self, func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            key = self._make_key(args, kwargs)
+            if key is None:
+                return func(*args, **kwargs)
+            if key not in self._cache:
+                self._cache[key] = func(*args, **kwargs)
+            return self._cache[key]
+
+        wrapper.clear_cache = self.clear_cache
+        return wrapper
+
+    def _make_key(self, args, kwargs):
+        try:
+            return (tuple(args), tuple(sorted(kwargs.items())))
+        except TypeError:
+            return None
+
+    def clear_cache(self):
+        self._cache.clear()
+
+
+try:
+    import streamlit as st
+except ImportError:
+    st = SimpleNamespace(cache_data=cache_data())
+
+@st.cache_data
 def profile_data(df: pd.DataFrame):
     """
     Generate basic profiling information for a dataset.
@@ -24,7 +63,7 @@ def profile_data(df: pd.DataFrame):
 
     return profile
 
-
+@st.cache_data
 def missing_values_summary(df):
     """
     Return missing values count and percentage for each column.
@@ -51,7 +90,7 @@ def missing_values_summary(df):
 
     return summary
 
-
+@st.cache_data
 def data_type_summary(df):
     """
     Return summary of data types.
@@ -72,12 +111,7 @@ def data_type_summary(df):
     summary["Data Type"] = summary["Data Type"].astype(str)
 
     return summary
-    summary.columns = [
-        "Data Type",
-        "Count"
-    ]
-
-    return summary
+@st.cache_data
 def descriptive_statistics(df):
     """
     Return descriptive statistics for numerical columns.
@@ -96,6 +130,7 @@ def descriptive_statistics(df):
     )
 
     return stats
+@st.cache_data
 def categorical_summary(df):
     """
     Return summary for categorical columns.
@@ -130,6 +165,7 @@ def categorical_summary(df):
         })
 
     return pd.DataFrame(summary)
+@st.cache_data
 def correlation_matrix(df):
     """
     Return correlation matrix for numerical columns.
@@ -140,6 +176,7 @@ def correlation_matrix(df):
     correlation = numeric_df.corr().round(2)
 
     return correlation
+@st.cache_data
 def numeric_columns(df):
     """
     Return all numeric columns.

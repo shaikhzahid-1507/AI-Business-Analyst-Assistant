@@ -1,10 +1,12 @@
+import streamlit as st
+
 import pandas as pd
 
 
 # ==========================================================
 # BUSINESS KPIs
 # ==========================================================
-
+@st.cache_data
 def business_kpis(df: pd.DataFrame):
     """
     Generate business KPI metrics.
@@ -38,7 +40,7 @@ def business_kpis(df: pd.DataFrame):
 # ==========================================================
 # CHURN
 # ==========================================================
-
+@st.cache_data
 def churn_distribution(df):
     """
     Return churn distribution.
@@ -61,7 +63,7 @@ def churn_distribution(df):
 # ==========================================================
 # MONTHLY CHARGES
 # ==========================================================
-
+@st.cache_data
 def monthly_charges(df):
     """
     Return Monthly Charges column.
@@ -73,7 +75,7 @@ def monthly_charges(df):
 # ==========================================================
 # CONTRACT
 # ==========================================================
-
+@st.cache_data
 def contract_distribution(df):
     """
     Return contract distribution.
@@ -100,7 +102,7 @@ def contract_distribution(df):
 # ==========================================================
 # PAYMENT METHOD
 # ==========================================================
-
+@st.cache_data
 def payment_distribution(df):
     """
     Return payment method distribution.
@@ -123,7 +125,7 @@ def payment_distribution(df):
 # ==========================================================
 # TENURE
 # ==========================================================
-
+@st.cache_data
 def tenure_distribution(df):
     """
     Return Tenure column.
